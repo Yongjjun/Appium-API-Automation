@@ -28,16 +28,19 @@ jobs:
 
     - name: Start Appium server
       run: |
-        nohup appium &  # Appium 서버를 백그라운드에서 실행
+        nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
         sleep 5  # 잠시 대기 (Appium 서버가 시작되기 위해 시간 필요)
 
-    - name: Wait for Appium server to start
+    - name: Check Appium server status
       run: |
-        # Appium 서버가 실행 중인지 확인하고 대기
-        while ! ps aux | grep '[a]ppium'; do
-          echo "Waiting for Appium server to start..."
-          sleep 2
-        done
+        # Appium 서버 로그가 appium.log에 있는지 확인
+        tail -n 20 appium.log  # 최근 20줄 로그 출력
+        # Appium 서버가 정상적으로 실행되었는지 확인
+        if ! grep -q "Appium REST http interface listener started" appium.log; then
+          echo "Appium server did not start correctly. Exiting."
+          exit 1
+        fi
+        echo "Appium server started successfully."
 
     - name: Run tests
       run: |
