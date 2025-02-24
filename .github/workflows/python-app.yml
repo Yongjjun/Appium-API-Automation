@@ -30,6 +30,10 @@ jobs:
       run: |
         npm install -g appium  # Appium 전역 설치
 
+    - name: Install Appium UiAutomator2 driver
+      run: |
+        appium driver install uiautomator2  # UiAutomator2 드라이버 설치
+
     - name: Start Appium server
       run: |
         nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
