@@ -30,9 +30,9 @@ jobs:
         export ANDROID_HOME=$HOME/android-sdk
         export PATH=$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools:$PATH
         
-        # SDK 패키지 설치
-        yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+        # sdkmanager 명령어가 정상적으로 작동하도록 cmdline-tools 설치 후 업데이트
+        yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
     - name: Install dependencies
       run: |
