@@ -8,7 +8,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 options = UiAutomator2Options()
 options.platform_name = "Android"
 options.device_name = "R3CWC0D5LZL"  # 실제 연결된 기기 이름
-options.platform_version = "14",
+options.platform_version = "14"
 options.app_package = "com.sec.android.app.popupcalculator"  # 삼성 계산기 패키지명
 options.app_activity = ".Calculator"  # 계산기 액티비티명
 options.automation_name = "UiAutomator2"
