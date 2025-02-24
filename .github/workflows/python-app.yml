@@ -21,6 +21,17 @@ jobs:
       with:
         python-version: '3.12.3'
 
+    - name: Set up Android SDK
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+        unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
+        export ANDROID_HOME=$HOME/android-sdk
+        export PATH=$ANDROID_HOME/tools/bin:$PATH
+        sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
