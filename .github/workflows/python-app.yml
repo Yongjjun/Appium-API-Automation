@@ -29,7 +29,15 @@ jobs:
     - name: Start Appium server
       run: |
         nohup appium &  # Appium 서버를 백그라운드에서 실행
-        sleep 10  # 10초 대기 (Appium 서버가 완전히 시작될 때까지 대기)
+        sleep 5  # 잠시 대기 (Appium 서버가 시작되기 위해 시간 필요)
+
+    - name: Wait for Appium server to start
+      run: |
+        # Appium 서버가 실행 중인지 확인하고 대기
+        while ! ps aux | grep '[a]ppium'; do
+          echo "Waiting for Appium server to start..."
+          sleep 2
+        done
 
     - name: Run tests
       run: |
