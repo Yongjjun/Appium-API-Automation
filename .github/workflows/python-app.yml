@@ -23,13 +23,15 @@ jobs:
 
     - name: Set up Android SDK
       run: |
-        sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk
+        # SDK 설치 경로 설정
+        mkdir -p $HOME/android-sdk/cmdline-tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-        unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
+        unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk/cmdline-tools
         export ANDROID_HOME=$HOME/android-sdk
-        export PATH=$ANDROID_HOME/tools/bin:$PATH
-        sdkmanager --licenses
+        export PATH=$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools:$PATH
+        
+        # SDK 패키지 설치
+        yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
     - name: Install dependencies
