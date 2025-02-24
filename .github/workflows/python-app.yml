@@ -23,7 +23,7 @@ jobs:
 
     - name: Set up Android SDK
       run: |
-        # SDK 설치 경로 설정
+        # Android SDK 설치 경로 설정
         mkdir -p $HOME/android-sdk/cmdline-tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
         unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk/cmdline-tools
@@ -37,7 +37,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt  # requirements.txt에 pytest와 필요한 의존성 설치
+        pip install -r requirements.txt  # requirements.txt에 pytest 및 의존성 설치
 
     - name: Install Appium
       run: |
@@ -55,13 +55,12 @@ jobs:
     - name: Start Appium server
       run: |
         nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
-        sleep 5  # 잠시 대기 (Appium 서버가 시작되기 위해 시간 필요)
+        sleep 5  # 잠시 대기 (Appium 서버 시작을 위한 시간)
 
     - name: Check Appium server status
       run: |
-        # Appium 서버 로그가 appium.log에 있는지 확인
+        # Appium 서버 로그를 확인하여 정상 실행 여부를 확인
         tail -n 20 appium.log  # 최근 20줄 로그 출력
-        # Appium 서버가 정상적으로 실행되었는지 확인
         if ! grep -q "Appium REST http interface listener started" appium.log; then
           echo "Appium server did not start correctly. Exiting."
           exit 1
@@ -74,7 +73,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest test_Appium_API2.py  # 테스트 실행
+        pytest test_Appium_API2.py  # Appium API 테스트 실행
 
     - name: Run flake8 linting
       run: |
