@@ -34,6 +34,11 @@ jobs:
       run: |
         appium driver install uiautomator2  # UiAutomator2 드라이버 설치
 
+    - name: Install adb (Android Debug Bridge)
+      run: |
+        sudo apt-get update
+        sudo apt-get install android-tools-adb  # adb 설치
+
     - name: Start Appium server
       run: |
         nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
