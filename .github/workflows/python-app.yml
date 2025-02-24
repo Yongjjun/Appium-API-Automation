@@ -1,33 +1,40 @@
-name: Python Appium Automation
+name: Run Appium & API Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.12.3
-      uses: actions/setup-python@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        python-version: "3.12.3"
+        python-version: '3.12'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt  # requirements.txt를 이용하여 의존성 설치
-    - name: Lint with flake8
+        pip install -r requirements.txt  # requirements.txt에 pytest와 필요한 의존성 설치
+
+    - name: Start Appium server
       run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+        nohup appium &  # Appium 서버를 백그라운드에서 실행
+        sleep 10  # 10초 대기 (Appium 서버가 완전히 시작될 때까지 대기)
+
+    - name: Run tests
       run: |
-        pytest Appum+API2.py
+        pytest test_Appium_API2.py  # 테스트 실행
+
+    - name: Run flake8 linting
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics  # flake8 실행
