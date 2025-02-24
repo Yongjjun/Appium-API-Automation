@@ -50,6 +50,10 @@ jobs:
         fi
         echo "Appium server started successfully."
 
+    - name: Verify connected Android devices
+      run: |
+        adb devices  # 연결된 Android 디바이스 확인
+
     - name: Run tests
       run: |
         pytest test_Appium_API2.py  # 테스트 실행
