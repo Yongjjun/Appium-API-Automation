@@ -26,6 +26,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # requirements.txt에 pytest와 필요한 의존성 설치
 
+    - name: Install Appium
+      run: |
+        npm install -g appium  # Appium 전역 설치
+
     - name: Start Appium server
       run: |
         nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
