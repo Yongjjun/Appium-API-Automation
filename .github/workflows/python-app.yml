@@ -31,4 +31,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests/  # test 폴더에서 실행 (필요에 따라 수정)
+        pytest
