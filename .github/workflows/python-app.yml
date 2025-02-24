@@ -27,17 +27,19 @@ jobs:
         mkdir -p $HOME/android-sdk/cmdline-tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
         unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk/cmdline-tools
+
+        # SDK 환경 변수 설정
         export ANDROID_HOME=$HOME/android-sdk
-        export PATH=$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools:$PATH
-        
-        # sdkmanager 명령어가 정상적으로 작동하도록 cmdline-tools 설치 후 업데이트
-        yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --licenses
-        $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+
+        # sdkmanager가 정상적으로 작동하도록 cmdline-tools 업데이트
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt  # requirements.txt에 pytest 및 의존성 설치
+        pip install -r requirements.txt  # pytest 및 의존성 설치
 
     - name: Install Appium
       run: |
