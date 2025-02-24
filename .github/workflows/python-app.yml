@@ -39,6 +39,26 @@ jobs:
         sudo apt-get update
         sudo apt-get install android-tools-adb  # adb 설치
 
+    - name: Start Appium server
+      run: |
+        nohup appium > appium.log 2>&1 &  # Appium 서버 실행, 로그를 appium.log에 저장
+        sleep 10  # Appium 서버 시작 후 10초 대기
+
+    - name: Check Appium server status
+      run: |
+        # Appium 서버 로그가 appium.log에 있는지 확인
+        tail -n 20 appium.log  # 최근 20줄 로그 출력
+        # Appium 서버가 정상적으로 실행되었는지 확인
+        if ! grep -q "Appium REST http interface listener started" appium.log; then
+          echo "Appium server did not start correctly. Exiting."
+          exit 1
+        fi
+        echo "Appium server started successfully."
+
+    - name: Verify connected Android devices
+      run: |
+        adb devices  # 연결된 Android 디바이스 확인
+
     - name: Run tests
       run: |
         pytest test_Appium_API2.py  # Appium API 테스트 실행
