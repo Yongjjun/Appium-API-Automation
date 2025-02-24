@@ -14,7 +14,7 @@ options.app_activity = ".Calculator"  # 계산기 액티비티명
 options.automation_name = "UiAutomator2"
 options.no_reset = True  # 앱 데이터 초기화 방지
 
-driver = webdriver.Remote("http://localhost:4723/wd/hub", options=options)
+driver = webdriver.Remote("http://localhost:4723", options=options)
 
 time.sleep(2)  # 앱이 완전히 로드될 때까지 대기
 
