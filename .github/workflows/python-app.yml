@@ -18,8 +18,14 @@ jobs:
         # Android SDK 경로 생성
         mkdir -p $HOME/Android/Sdk
         
-        # SDK 도구 설치
-        echo "Setting up Android SDK..."
+        # SDK cmdline-tools 다운로드
+        echo "Downloading Android SDK cmdline-tools..."
+        curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip
+        
+        # SDK 도구 압축 해제
+        unzip sdk-tools.zip -d $HOME/Android/Sdk/cmdline-tools
+        
+        # 환경 변수 설정
         echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
         echo "export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
         echo "export PATH=$PATH:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
