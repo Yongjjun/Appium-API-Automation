@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # 파이썬 버전 설정
+          python-version: '3.12'  # 파이썬 버전 설정
 
       - name: Install dependencies
         run: |
@@ -34,12 +34,15 @@ jobs:
           # 환경 변수 설정
           echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
           echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
-          # sdkmanager 실행 가능하도록 환경 변수 반영
+          # sdkmanager 사용 가능하도록 환경 변수 반영
           source $GITHUB_ENV
-          # sdkmanager 사용 가능 확인
+          # sdkmanager 설치된 시스템 확인
           sdkmanager --version
           # sdkmanager 라이센스 동의
           sdkmanager --licenses
+          # avdmanager 설치 (필요한 경우)
+          sdkmanager "tools"
+          sdkmanager "platform-tools"
           sdkmanager "system-images;android-29;google_apis;x86_64"
 
       - name: Set up Android Emulator
