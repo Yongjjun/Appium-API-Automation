@@ -28,7 +28,9 @@ jobs:
           echo "Setting up AVD..."
           # AVD 생성 시 자동화 옵션 추가
           avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --force -d pixel
-          avdmanager -list-avds  # 생성된 AVD 목록 확인
+          
+          # AVD 목록 확인 (올바른 명령어 사용)
+          avdmanager list avd
           
           # AVD 실행
           $ANDROID_HOME/emulator/emulator -avd testAVD -no-audio -no-window -no-boot-anim &
