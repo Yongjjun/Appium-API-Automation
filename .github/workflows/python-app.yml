@@ -1,54 +1,49 @@
-name: Android UI Tests
+name: Appium Android Test on Physical Device
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  android-test:
+    runs-on: [self-hosted, linux]
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+    - name: Install Android SDK
+      run: |
+        sudo apt update
+        sudo apt install -y android-sdk
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30"
 
-      - name: Install system images
-        run: |
-          sdkmanager "system-images;android-30;google_apis;x86_64"
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+    - name: Set up Appium
+      run: |
+        npm install -g appium
 
-      - name: Create AVD and launch emulator
-        run: |
-          echo "Setting up AVD..."
-          
-          # AVD 생성 명령어 (경로 수정)
-          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --force -d pixel
+    - name: Start Appium server
+      run: |
+        appium &
 
-          # AVD 목록 확인 (AVD가 제대로 생성되었는지 확인)
-          avdmanager list avd
-          
-          # AVD 경로 확인 및 디렉터리 생성
-          mkdir -p $HOME/.android/avd
-          
-          # AVD ini 파일이 없으면 생성
-          if [ ! -f $HOME/.android/avd/testAVD.avd.ini ]; then
-            touch $HOME/.android/avd/testAVD.avd.ini
-          fi
-          
-          # AVD 실행
-          $ANDROID_HOME/emulator/emulator -avd testAVD -no-audio -no-window -no-boot-anim &
-          adb wait-for-device
-          adb shell input keyevent 82  # 화면 잠금 해제
-        timeout-minutes: 10
+    - name: Set up adb
+      run: |
+        adb start-server
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+    - name: Wait for device to be recognized
+      run: |
+        adb devices
+        sleep 5
+        adb devices  # 재차 확인
 
-      - name: Run tests
-        run: pytest test_Appium_API2.py
+    - name: Run Appium tests
+      run: |
+        # Appium을 통해 테스트 실행
+        python -m unittest test_Appium_API2.py
