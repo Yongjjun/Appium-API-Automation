@@ -32,6 +32,9 @@ jobs:
           # AVD 목록 확인 (AVD가 제대로 생성되었는지 확인)
           avdmanager list avd
           
+          # AVD 경로 확인 및 파일 수정 (테스트 환경에 맞는 파일 경로 설정)
+          echo "testAVD.ini" > $HOME/.android/avd/testAVD.avd.ini  # testAVD.ini 파일 생성
+          
           # AVD 실행
           $ANDROID_HOME/emulator/emulator -avd testAVD -no-audio -no-window -no-boot-anim &
           adb wait-for-device
