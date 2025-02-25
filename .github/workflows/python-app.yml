@@ -18,14 +18,19 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install system images
+        run: |
+          sdkmanager "system-images;android-30;google_apis;x86_64"
+          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+
       - name: Create AVD and launch emulator
         run: |
           echo "Setting up AVD..."
-          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86" --force
+          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --force
           $ANDROID_HOME/emulator/emulator -avd testAVD -no-audio -no-window -no-boot-anim &
           adb wait-for-device
           adb shell input keyevent 82  # 화면 잠금 해제
-        timeout-minutes: 5
+        timeout-minutes: 10
 
       - name: Install dependencies
         run: pip install -r requirements.txt
