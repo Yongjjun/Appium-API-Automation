@@ -25,27 +25,33 @@ jobs:
         # SDK 도구 압축 해제
         unzip sdk-tools.zip -d $HOME/Android/Sdk/cmdline-tools
         
+        # 최신 버전 경로 설정
+        mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
+        
         # 환경 변수 설정
         echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
         echo "export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
         echo "export PATH=$PATH:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
         echo "export PATH=$PATH:$ANDROID_HOME/tools" >> $GITHUB_ENV
         
+        # 환경 변수 반영
+        source $GITHUB_ENV
+        
         # SDK 업데이트 및 필요한 패키지 설치
-        sdkmanager --update
-        sdkmanager "platform-tools" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
-        sdkmanager --list
+        echo "Updating SDK tools..."
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --update
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
 
     - name: Set up AVD (Android Virtual Device)
       run: |
         # AVD 생성
         echo "Creating AVD..."
-        echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
+        echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
         
         # AVD 시작
         echo "Starting AVD..."
         nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window &
-
+        
         # AVD 초기화 기다리기
         sleep 60
 
