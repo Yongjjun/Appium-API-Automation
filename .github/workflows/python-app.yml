@@ -42,6 +42,7 @@ jobs:
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --update
         
         # 시스템 이미지 설치 (경로 확인 후 사용)
+        echo "Installing system image for AVD..."
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-30;google_apis;x86_64"
 
     - name: Set up AVD (Android Virtual Device)
