@@ -26,8 +26,8 @@ jobs:
       - name: Create AVD and launch emulator
         run: |
           echo "Setting up AVD..."
-          # AVD 생성 후 목록을 확인하여 AVD가 잘 생성되었는지 확인
-          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --force
+          # AVD 생성 시 자동화 옵션 추가
+          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --force -d pixel
           avdmanager -list-avds  # 생성된 AVD 목록 확인
           
           # AVD 실행
