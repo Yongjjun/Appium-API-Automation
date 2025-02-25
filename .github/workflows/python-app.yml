@@ -1,4 +1,4 @@
-name: Python CI with Appium
+name: Appium Automation
 
 on:
   push:
@@ -6,52 +6,57 @@ on:
       - main
 
 jobs:
-  test:
-    runs-on: macos-latest  # macOS 환경에서 실행
+  setup:
+    runs-on: macos-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Check out repository
+      uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'  # 파이썬 버전 설정
+    - name: Set up Android SDK
+      run: |
+        # Android SDK 경로 생성
+        mkdir -p $HOME/Android/Sdk
+        
+        # SDK 도구 설치
+        echo "Setting up Android SDK..."
+        echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
+        echo "export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
+        echo "export PATH=$PATH:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+        echo "export PATH=$PATH:$ANDROID_HOME/tools" >> $GITHUB_ENV
+        
+        # SDK 업데이트 및 필요한 패키지 설치
+        sdkmanager --update
+        sdkmanager "platform-tools" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
+        sdkmanager --list
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # 필요한 패키지 설치
+    - name: Set up AVD (Android Virtual Device)
+      run: |
+        # AVD 생성
+        echo "Creating AVD..."
+        echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
+        
+        # AVD 시작
+        echo "Starting AVD..."
+        nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window &
 
-      - name: Set up Android SDK
-        run: |
-          echo "Setting up Android SDK..."
-          # Android Command Line Tools 다운로드
-          curl -L https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip -o /tmp/cmdline-tools.zip
-          # 압축 해제
-          mkdir -p $HOME/Android/Sdk/cmdline-tools/latest
-          unzip /tmp/cmdline-tools.zip -d $HOME/Android/Sdk/cmdline-tools/latest
-          # 환경 변수 설정
-          echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
-          # 환경 변수 반영
-          source $GITHUB_ENV
-          # sdkmanager 라이센스 동의
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-          # sdkmanager 설치된 시스템 확인
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --version
-          # 필요한 도구들을 설치
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "emulator" "build-tools;29.0.3" "system-images;android-29;google_apis;x86_64"
+        # AVD 초기화 기다리기
+        sleep 60
 
-      - name: Set up Android Emulator
-        run: |
-          echo "Setting up AVD..."
-          # AVD 만들기
-          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-29;google_apis;x86_64"
-          # AVD 실행
-          $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -no-audio -gpu off &  # 에뮬레이터 실행
+    - name: Install Appium and dependencies
+      run: |
+        # Node.js와 Appium 설치
+        npm install -g appium
+        appium --version
 
-      - name: Run Appium tests
-        run: |
-          appium &  # Appium 서버 실행
-          python test_Appium_API2  # 테스트 실행
+    - name: Run Appium tests
+      run: |
+        # Appium 테스트 실행
+        appium --use-plugins element-wait
+        # 추가 테스트 실행 명령어들
+        python -m unittest discover -s tests
+
+    - name: Clean up AVD
+      run: |
+        # AVD 종료
+        adb -s emulator-5554 emu kill
