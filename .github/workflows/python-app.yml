@@ -1,4 +1,4 @@
-name: Run Appium Tests on Physical Device
+name: Python CI with Appium
 
 on:
   push:
@@ -7,38 +7,30 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, linux]
+    runs-on: macos-latest  # macOS 환경에서 실행
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # 파이썬 버전 설정
 
-    - name: Install Android SDK
-      run: |
-        sudo apt update
-        sudo apt install -y android-sdk
-        yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # 필요한 패키지 설치
 
-    - name: Install Appium
-      run: |
-        npm install -g appium
+      - name: Set up Android Emulator
+        run: |
+          echo "Setting up AVD..."
+          sdkmanager "system-images;android-29;google_apis;x86_64"
+          avdmanager create avd -n testAVD -k "system-images;android-29;google_apis;x86_64"
+          emulator -avd testAVD -no-window -no-audio -gpu off &  # 에뮬레이터 실행
 
-    - name: Start Appium server
-      run: |
-        appium &
-
-    - name: Wait for device to be recognized
-      run: |
-        adb start-server
-        sleep 10
-        adb devices  # 디바이스가 정상적으로 연결되었는지 확인
-
-    - name: Run Appium tests
-      run: |
-        python -m unittest test_Appium_API2.py  # 실제 테스트 파일 실행
+      - name: Run Appium tests
+        run: |
+          appium &  # Appium 서버 실행
+          python -m unittest discover tests  # 테스트 실행
