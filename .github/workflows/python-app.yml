@@ -26,9 +26,12 @@ jobs:
       - name: Set up Android SDK
         run: |
           echo "Setting up Android SDK..."
-          # Android SDK를 다운로드하고 설치
-          curl -s https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip -o cmdline-tools.zip
-          unzip cmdline-tools.zip -d $HOME/Android/Sdk
+          # Android Command Line Tools 다운로드 (수정된 다운로드 URL)
+          curl -L https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip -o /tmp/cmdline-tools.zip
+          # 압축 해제
+          mkdir -p $HOME/Android/Sdk/cmdline-tools
+          unzip /tmp/cmdline-tools.zip -d $HOME/Android/Sdk/cmdline-tools
+          # 환경 변수 설정
           echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
           echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
           # sdkmanager 실행
