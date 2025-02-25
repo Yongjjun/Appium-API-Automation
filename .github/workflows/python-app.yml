@@ -41,7 +41,7 @@ jobs:
         echo "Updating SDK tools..."
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --update
         
-        # 필요한 패키지 설치
+        # 필요한 패키지 설치 (system-images 경로 변경 시도)
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;30.0.3" "system-images;android-30;google_apis;x86_64"
 
     - name: Set up AVD (Android Virtual Device)
