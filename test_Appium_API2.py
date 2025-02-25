@@ -1,9 +1,24 @@
 import time
 import re
+import os
+import subprocess
 import requests
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 from appium.webdriver.common.appiumby import AppiumBy
+
+def get_device_name():
+    """ 환경 변수가 있으면 사용하고, 없으면 ADB로 자동 감지 """
+    device_name = os.getenv("DEVICE_NAME")
+    if device_name:
+        return device_name  # GitHub Actions에서는 환경 변수 값 사용
+
+    try:
+        result = subprocess.run(["adb", "shell", "getprop", "ro.product.model"], capture_output=True, text=True)
+        return result.stdout.strip()
+    except Exception as e:
+        print(f"Error getting device name: {e}")
+        return "default_device"
 
 options = UiAutomator2Options()
 options.platform_name = "Android"
